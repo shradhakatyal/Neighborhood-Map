@@ -1,3 +1,30 @@
-#my-map {
+.my-map {
     height: 800px;
+    width: 85%;
+}
+
+.list-view {
+    width: 15%;
+    float: left;
+}
+
+.places {
+    list-style: none;
+    margin-top: 30px;
+    padding: 10px;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.places > li {
+    font-size: 20px;
+    text-align: justify;
+    padding: 10px;
+}
+
+.filter-places {
+    display: block;
+    width: 90%;
+    margin: 0 auto;
+    font-size: 18px;
 }
