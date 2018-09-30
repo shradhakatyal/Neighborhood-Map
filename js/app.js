@@ -1,4 +1,4 @@
-var viewModel, place;
+var viewModel, place, map;
 var markers = [];
 
 // A list of places added by default to the map
@@ -51,7 +51,7 @@ var places = [
 // Initialising the map
 function initMap() {
     var center = {lat: 28.6315, lng: 77.2167}
-    var map = new google.maps.Map(
+    map = new google.maps.Map(
         document.getElementById('my-map-js'), {zoom: 12, center: center});
     
     // Populating the markers onto the map
@@ -68,6 +68,31 @@ function initMap() {
         
         // Assigning marker property to place array.
         viewModel.place()[index].marker = marker;
+
+        var infoWindow = new google.maps.InfoWindow();
+        // Click listener to open info window when a marker is clicked.
+        marker.addListener('click', function() {
+            setInfoWindow(this, infoWindow);
+            // infoWindow.setContent(contentString);
+        });
+    }
+}
+
+// Function to set the info window
+function setInfoWindow(marker, infoWindow, title) {
+    // Check if the marker is closed or not.
+    if (infoWindow.marker != marker) {
+        infoWindow.marker = marker;
+        infoWindow.setContent('<div class="title">' + marker.title + '</div>');
+
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            marker.setAnimation(null);
+        }, 500);
+        infoWindow.open(map, marker);
+        infoWindow.addListener('closeclick', function() {
+            infoWindow.setMarker = null;
+        });
     }
 }
 
