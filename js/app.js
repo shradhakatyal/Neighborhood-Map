@@ -1,4 +1,5 @@
 var viewModel, place;
+var markers = [];
 
 // A list of places added by default to the map
 
@@ -62,35 +63,63 @@ function initMap() {
             title: place["name"],
             animation: google.maps.Animation.DROP
         });
+        // Storing all the markers in an array.
+        markers.push(marker);
+        
+        // Assigning marker property to place array.
+        viewModel.place()[index].marker = marker;
     }
 }
 
-function createLocationArray(places) {
-    var temp = [];
-    for(var i=0;i<places.length;i++) {
-        var obj = {"name": places[i].name}
-        temp.push(obj);
-    }
-    return temp;
+
+// Create Location object
+function createLocation(location) {
+    var self = this;
+    self.name = location.name;
+    self.location = location.location;
+    self.show = ko.observable(true);
 }
 
 function ViewModel() {
     var self = this;
-    var place = createLocationArray(places)
-    self.place = ko.observableArray(place);
+
+    // Place is defined as an observable array since it will store an array of locations
+    self.place = ko.observableArray();
     self.searchQuery = ko.observable('');
 
-    self.filterPlaces = function() {
-        var filter = self.searchQuery().toLowerCase();
-        place = self.place().filter(function(p) {
-            return p.name.toLowerCase().indexOf(filter) > -1
-        });
-        console.log(place);
+    for(var i=0;i<places.length;i++) {
+        var tempPlace = new createLocation(places[i]);
+        self.place.push(tempPlace);
     }
+
+    self.filterPlaces = ko.computed(function() {
+        var filter = self.searchQuery().toLowerCase();
+        for(var i=0;i<self.place().length;i++) {
+            if(self.place()[i].name.toLowerCase().indexOf(filter) > -1) {
+                console.log(self.place()[i].name);
+                self.place()[i].show(true);
+                if(self.place()[i].marker) {
+                    self.place()[i].marker.setVisible(true)
+                }
+            } else {
+                self.place()[i].show(false);
+                if(self.place()[i].marker) {
+                    self.place()[i].marker.setVisible(false)
+                }
+            }
+        }
+    })
+
+    self.place.subscribe(function(place) {
+        console.log('here')
+        self.filterPlaces(place);
+    });
 }
 
+var viewModel = new ViewModel()
+
 // activate knockout apply binding
-ko.applyBindings(new ViewModel());
+ko.applyBindings(viewModel);
 
 
 
