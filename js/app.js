@@ -146,5 +146,15 @@ var viewModel = new ViewModel()
 // activate knockout apply binding
 ko.applyBindings(viewModel);
 
-
-
+function toggleMenu(el) {
+    if(screen.width <= 768) {
+        var listView = document.querySelector('.list-view');
+        el.classList.toggle('change');
+        console.log(listView.style.display);
+        if(window.getComputedStyle(listView).display === 'none') {
+            listView.style.display = 'block';
+        } else if(window.getComputedStyle(listView).display === 'block') {
+            listView.style.display = 'none';
+        }
+    }
+}

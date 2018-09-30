@@ -14,14 +14,18 @@
 <body>
 
     <!-- List of the places on map -->
-    <div class="list-view">
-        <!-- Filter through the list of places -->
-        <input type="text" name="Filter" id="filter-places" class="filter-places" data-bind="textInput: searchQuery, valueUpdate: 'afterkeydown', event: {keyup: filterPlaces}">
-        <ul class="places" data-bind="foreach: place">
-            <li class="place" data-bind="text: name, visible: show"></li>
-        </ul>
+    <div class="menu-container" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="list-view">
+            <!-- Filter through the list of places -->
+            <input type="text" name="Filter" id="filter-places" class="filter-places" data-bind="textInput: searchQuery, valueUpdate: 'afterkeydown', event: {keyup: filterPlaces}">
+            <ul class="places" data-bind="foreach: place">
+                <li class="place" data-bind="text: name, visible: show"></li>
+            </ul>
+        </div>
     </div>
-    
     <!-- <p>My name is <span data-bind="text: personName"></span> and I am <span data-bind="text: personAge"></span>years old</p> -->
     <div id="my-map-js" class="my-map"></div>
     <!-- jQuery and Knockout CDN -->
