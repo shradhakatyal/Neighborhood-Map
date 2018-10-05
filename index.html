@@ -14,15 +14,15 @@
 <body>
 
     <!-- List of the places on map -->
-    <div class="menu-container" onclick="toggleMenu(this)">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
+    <div class="menu-container">
+        <div class="bar1 bars" onclick="toggleMenu(this)"></div>
+        <div class="bar2 bars" onclick="toggleMenu(this)"></div>
+        <div class="bar3 bars" onclick="toggleMenu(this)"></div>
         <div class="list-view">
             <!-- Filter through the list of places -->
             <input type="text" name="Filter" id="filter-places" class="filter-places" data-bind="textInput: searchQuery, valueUpdate: 'afterkeydown', event: {keyup: filterPlaces}">
             <ul class="places" data-bind="foreach: place">
-                <li class="place" data-bind="text: name, visible: show"></li>
+                <li class="place" data-bind="text: name, visible: show, event: {click: $parent.showLocationOnMap}"></li>
             </ul>
         </div>
     </div>
