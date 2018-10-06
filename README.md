@@ -16,6 +16,11 @@ This is a web application that displays some place of interest in New Delhi on a
 - Extract the files.
 - Open index.html to run the application.
 
+## Supported Browsers
+- Chrome
+- Safari
+- Firefox
+
 ## Resources
 - [Knockout js](https://knockoutjs.com/documentation/observables.html)
 - [Google Maps API](https://developers.google.com/maps/documentation/javascript/tutorial)
