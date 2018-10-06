@@ -1,9 +1,11 @@
 var viewModel, place, map;
 var markers = [];
+
+//Client id and secret for the Foursquare API
 var CLIENT_ID = "0RPZZONT1T0CSYPX2KCESXOG5SPAXE3BOO34RKTJY1HQY2ZI";
 var CLIENT_SECRET = "NAZQIKCE5AQC0GSYB2KVJ3KJFNDMJCTMZLTC1G3Y3YPVQWET";
-// A list of places added by default to the map
 
+// A list of places added by default to the map
 var places = [
 {
     name: "India Gate",
@@ -45,6 +47,48 @@ var places = [
     location: {
         "lat": 28.5931,
         "lng": 77.2197
+    }
+},
+{
+    name: "Akshardham Temple",
+    location: {
+        "lat": 28.6127,
+        "lng": 77.2773
+    }
+},
+{
+    name: "Jama Masjid",
+    location: {
+        "lat": 28.6507,
+        "lng": 77.2334
+    }
+},
+{
+    name: "Jantar Mantar",
+    location: {
+        "lat": 28.6271,
+        "lng": 77.2166
+    }
+},
+{
+    name: "Agrasen Ki Baoli",
+    location: {
+        "lat": 28.6260,
+        "lng": 77.2250
+    }
+},
+{
+    name: "Rail Museum",
+    location: {
+        "lat": 28.5858,
+        "lng": 77.1798
+    }
+},
+{
+    name: "National Museum",
+    location: {
+        "lat": 28.6118,
+        "lng": 77.2195
     }
 }
 ]
@@ -98,9 +142,9 @@ function initMap() {
                 });
 
                 //Automatically close info window after 3 seconds
-                // window.setTimeout(function(){
-                //     infoWindow.close();
-                // }, 3000);
+                window.setTimeout(function(){
+                    infoWindow.close();
+                }, 3000);
             }
 
             // Fetching data from foursquare api for each marker
@@ -108,7 +152,7 @@ function initMap() {
             // foursquare api url
             var foursquareUrl = "https://api.foursquare.com/v2/venues/search";
             var contentString;
-            var venue, address, category, foursquareId;
+            var venue, address, category, linkId;
             // ajax request - foursquare api data (https://developer.foursquare.com/docs/)
             $.ajax({
                 url: foursquareUrl,
@@ -116,28 +160,32 @@ function initMap() {
                 data: {
                     client_id: CLIENT_ID,
                     client_secret: CLIENT_SECRET,
-                    query:  marker.title, // gets data from marker.title (array of object)
+                    query:  marker.title,
                     near: "Delhi",
-                    v: 20181005 // version equals date
+                    v: 20181005 
                 },
                 success: function(data) {
-                    // console.log(data);
-                        // get venue info
+                        // Storing information about venue.
                         venue = data.response.venues[0];
-                        console.log(venue)
+
+                        // Storing the address and category of the venue.
                         address = venue.location.formattedAddress;
                         category = venue.categories[0].name;
-                        // gets link of place
-                        foursquareId = "https://foursquare.com/v/" + venue.id;
+                        
+                        // The following url is used to get more information about a particular venue depending on the venue id.
+                        linkId = "https://foursquare.com/v/" + venue.id;
                         
                         photoUrl = "https://api.foursquare.com/v2/venues/"+venue.id+"/photos";
                         
-                        // populates infowindow with api info
-                        contentString = "<div class='name'>" + "Name: " + "<span class='info'>" + venue.name + "</span></div>" +
-                            "<div class='category'>" + "Catergory: " + "<span class='info'>" + category + "</span></div>" +
-                            "<div class='address'>" + "Location: " + "<span class='info'>" + address + "</span></div>" +
-                            "<div class='information'>" + "More info: " + "<a href='" + foursquareId + "'>" + "Click here" + "</a></div>";
+                        // Setting the content string with data retrieved from the API.
+                        contentString = "<div class='name'>" + "Name: " + venue.name + "</div>" +
+                            "<div class='category'>" + "Catergory: " + category + "</div>" +
+                            "<div class='address'>" + "Location: " + address + "</div>" +
+                            "<div class='information'>" + "More information: " + "<a href='" + linkId + "'>" + "Click here" + "</a></div>";
+                            // Getting the photo for the venue using another ajax request
                             getPhoto(photoUrl);
+
+                            // Setting the content string of the marker.
                             marker.contentString;
                 },
                 error: function() {
@@ -145,6 +193,7 @@ function initMap() {
                 }
             });
 
+            // Function to get the photo of the venue.
             function getPhoto(url) {
                 $.ajax({
                     url: url,
@@ -159,7 +208,7 @@ function initMap() {
                         contentString = "<div class='image'><img src='"+imgUrl+"'></div>"+contentString;
                     },
                     error: function(err) {
-                        console.log(err);
+                        contentString = "<div class='error'>Venue photos are not available. Reason: "+err.responseJSON.meta.errorDetail+"</div>"+contentString;
                     }
                 });
             }
@@ -172,31 +221,38 @@ function createLocation(location) {
     var self = this;
     self.name = location.name;
     self.location = location.location;
+    // show is declared as an observable because when it changes the DOM will get updated.
     self.show = ko.observable(true);
 }
 
 function ViewModel() {
     var self = this;
 
-    // Place is defined as an observable array since it will store an array of locations
+    // Place is declared as an observable array since it will store an array of locations.
     self.place = ko.observableArray();
+
+    // Search query is declared as a ko observable.
     self.searchQuery = ko.observable('');
 
+    // Adding places to the place array to be displayed in a list view.
     for(var i=0;i<places.length;i++) {
         var tempPlace = new createLocation(places[i]);
         self.place.push(tempPlace);
     }
 
+    // Method on view model to filter places based on the search string.
     self.filterPlaces = ko.computed(function() {
         var filter = self.searchQuery().toLowerCase();
         for(var i=0;i<self.place().length;i++) {
             if(self.place()[i].name.toLowerCase().indexOf(filter) > -1) {
                 console.log(self.place()[i].name);
                 self.place()[i].show(true);
+                // Show marker for matching places.
                 if(self.place()[i].marker) {
                     self.place()[i].marker.setVisible(true)
                 }
             } else {
+                // Hide places that do not match and also hide their markers from the map.
                 self.place()[i].show(false);
                 if(self.place()[i].marker) {
                     self.place()[i].marker.setVisible(false)
@@ -205,6 +261,7 @@ function ViewModel() {
         }
     });
 
+    // This method triggers a click event on the marker when a location is clicked in the list.
     self.showLocationOnMap = function(locations) {
         google.maps.event.trigger(locations.marker, 'click');
     };
@@ -212,9 +269,11 @@ function ViewModel() {
 
 var viewModel = new ViewModel()
 
-// activate knockout apply binding
+// Activate knockout apply binding
 ko.applyBindings(viewModel);
 
+
+// Function to toggle menu using hamburger icon for screens < 768px
 function toggleMenu(el) {
     if(screen.width <= 768) {
         var listView = document.querySelector('.list-view');
