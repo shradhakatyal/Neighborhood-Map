@@ -20,7 +20,7 @@
         <div class="bar3 bars" onclick="toggleMenu(this)"></div>
         <div class="list-view">
             <!-- Filter through the list of places -->
-            <input type="text" name="Filter" id="filter-places" class="filter-places" data-bind="textInput: searchQuery, valueUpdate: 'afterkeydown', event: {keyup: filterPlaces}">
+            <input type="text" name="Filter" id="filter-places" class="filter-places" data-bind="textInput: searchQuery, valueUpdate: 'afterkeydown'">
             <ul class="places" data-bind="foreach: place">
                 <li class="place" data-bind="text: name, visible: show, event: {click: $parent.showLocationOnMap}"></li>
             </ul>
@@ -46,7 +46,7 @@
 
     <!-- Gogle maps API -->
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC22MyE1i5UOgviGc7zZz96lP7R1ByCSRI&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC22MyE1i5UOgviGc7zZz96lP7R1ByCSRI&callback=initMap" onerror="alert('Something went wrong with Maps API. Please try again later.')">
     </script>
 
 </body>
